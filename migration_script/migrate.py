@@ -371,7 +371,6 @@ def model_data_exists_on_v10(field, data):
 			print("PRODUCT.UOM.CATEG")
 			print("==============================================")
 			changedFilterFields = models_with_changed_field_values[modelName]
-			print("changedFilterFields = %s" %changedFilterFields)
 			for filter_field in filter:
 				if filter_field in changedFilterFields:
 					old_value = changedFilterFields[filter_field]['old_value']
@@ -390,16 +389,12 @@ def model_data_exists_on_v10(field, data):
 		if filterClause:
 			modelData10 = model10.getRecordsWhere(filter=filterClause, fields=['id'])
 			# modelData10 = objectInstance.env['purchase.order'].search(filterClause)
-			print("MYOJBCT = %s" %modelData10)
 			if len(modelData10) > 0:
 				return modelData10[0]['id'] # return only the first record
 				# print("----------------------")
 				# print("MYID = %s" %modelData10.id)
 				# return modelData10.id
 			else:
-				print("//////////////")
-				print("MYWORLD")
-				print("/////////////")
 				return False
 		else:
 			# print("modelData = %s" %modelData)
@@ -420,9 +415,7 @@ def model_data_exists_on_v10(field, data):
 				return False
 
 def model_data_exists_on_v10_many2many(field, id):
-	print("================")
 	print("model_data_exists_on_v10_many2many")
-	print("===============")
 	if field in field_key_to_model:
 		modelName = field_key_to_model[field]['model']
 		filters = field_key_to_model[field]['filters']
@@ -468,7 +461,6 @@ def generate_filter_clause(filter_names, data):
 
 def create_or_get_many2one_orders(order):
 	print("create_or_get_many2one_orders()")
-	print("many2one model creation = %s" %order)
 	record = {}
 	
 	for field in order:
@@ -504,8 +496,6 @@ def create_or_retrieve_id_many2many_orders(order):
 
 		for id in order[field]	:
 			modelData10 = model_data_exists_on_v10_many2many(field, id) # this method returns the ID of the model if it already exist on v10 
-			print("Hello there = %s" %modelData10)
-			print("------------------------------------------")
 			if not modelData10:
 				selected_fields = field_key_to_model[field]['selected_fields'].split(",")
 				print("modelID = %s" %id)
@@ -528,11 +518,9 @@ def create_or_retrieve_id_many2many_orders(order):
 								print("field %s value is %s" %(key, mappings['many2many'][key]))
 							else:
 								print("many2many key does not exist")
-								# create_or_get_many2one_orders(model.getRecordsWithIds(mappings['many2many'][key]))
 
 
 					# let check if we auth to create field_object data
-					
 					if len(mappings['many2one']) > 0:
 						print("many2one mapping > 0")
 						many2one = mappings['many2one'][0]
@@ -702,10 +690,6 @@ def migrate_purchase_orders(orders):
 	return createdOrdersNames
 
 def move_waybill_number_and_analytic_tags(invoice_ids):
-	print("invoice_ids inw move_waybill is %s" %invoice_ids)
-	print("move_waybill_number_and_analtic_tags()")
-	print("order_date = %s" %order_date)
-	# invoice_ids = odooAdapter10.setModel("account.invoice").getRecordsWhere([('date_invoice', '=', order_date)])
 	print("invoice_ids = %s" %invoice_ids)
 	for invoice_id in invoice_ids:
 		invoice_lines = odooAdapter10.setModel("account.invoice.line").getRecordsWhere(filter=[('invoice_id', '=', invoice_id)])
@@ -718,7 +702,6 @@ def move_waybill_number_and_analytic_tags(invoice_ids):
 			customer_number = line['cust_order_no']
 			truck_number = line['truck_no']
 			quantity = line['quantity']
-
 			print("customer_number = %s" %customer_number)
 			print("truck number = %s" %truck_number)
 			print("quantity = %s" %quantity)
@@ -763,30 +746,6 @@ def sales_order_migration_primming():
 		record = records[0]
 		odooAdapter.setModel("product.uom").updateRecord(record['id'], {"name": "Condensate Litres"})
 
-# 	# if 'stock.warehouse' with name 'Tema-Asogli' is not on v10, we create it in v10 
-# 	result = odooAdapter10.setModel('stock.warehouse').getRecordsWhere(filter=[('name', '=', 'Tema-Asogli')])
-# 	if len(result) == 0:
-# 		# it does not exist so we create it in v10
-		
-
-
-	# res.partner with name 'Lonestar Oil Company Limited ' != 'Lonestar Oil Company Limited' on v10.
-	# Fix: strip off the trailing whitespace in v8 to it muchs that of v10
-	# names = {'Central Brent Petroleum ': 'Central Brent Petroleum', 'Lonestar Oil Company Limited ': 'Lonestar Oil Company Limited'}
-	# partnersIn8  = odooAdapter.setModel('res.partner').getRecordsWhere(filter=[], fields=['id', 'name'])
-	# for partner in partnersIn8:
-	# 	id = partner['id']
-	# 	name = partner['name'].strip()
-	# 	odooAdapter.setModel('res.partner').updateRecord(id, {"name": name})
-
-	# for v8name,v10name in names.iteritems():
-	# 	records = odooAdapter.setModel("res.partner").getRecordsWhere(filter=[('name', '=', v8name)], fields=['id'])
-	# 	if len(records) > 0:
-	# 		recordId = records[0]['id']
-	# 		print("recordId = %s" %recordId)
-	# 		result = odooAdapter.updateRecord(recordId, {"name": v10name})
-	# 		print("updat result = %s" %result)
-
 
 def migrate_sale_orders(orders):
 	print("migrating sale orders")
@@ -803,9 +762,6 @@ def migrate_sale_orders(orders):
 	createdOrdersIds = []
 	createdOrdersNames = []
 	index = 0
-	# existingOrders = objectInstance.env['purchase.order'].search([])
-	# print("Existing Orders = %s" %existingOrders)
-	# print("Existing Orders Length = %s" %len(existingOrders))
 
 	print("Groupings = %s" %orders_groupings)
 	for order_groups in orders_groupings:
@@ -854,8 +810,6 @@ def migrate_sale_orders(orders):
 			createdOrderLineId = odooAdapter10.setModel('sale.order.line').createRecord(line)
 			createdOrder['order_line_ids'].append(createdOrderLineId)
 		index += 1
-
-		# Let's add the truck_number to the order
 
 	return createdOrdersNames
 
@@ -922,7 +876,6 @@ def migrate_stock_pickings(orderNames=[], migration_details=None):
 def migrate_orders(orders, migration_details=None):
 	print("Starting migrations")
 	print("Total Orders = %s" %len(orders))
-	print("migraiont detaisl = %s" %migration_details)
 
 	global odooAdapter
 	global odooAdapter10
@@ -958,13 +911,7 @@ def migrate_orders(orders, migration_details=None):
 		orders = odooAdapter.setModel('purchase.order').getRecordsWhere(filter=[('date_order', ">=", order_date), ('date_order', '<=', order_date), ('state', '=', 'done')], fields=purchase_order_model['selected_fields'])
 		purchase_orders_names = migrate_purchase_orders(orders)
 		print("pruchase_order_names = %s" %purchase_orders_names)
-		createdOrderNames['purchases'] =  purchase_orders_names or []
-	# orders = odooAdapter10.setModel('purchase.order').getRecordsWhere(filter=[('name', 'in', createdOrdersNames)])
-	# print("Length = %s" %len(orders))
-
-	# anotherOrder = objectInstance.env['purchase.order'].search([('name', 'in', createdOrdersNames)])
-	# print("another = %s" %anotherOrder)
-	
+		createdOrderNames['purchases'] =  purchase_orders_names or []	
 
 	if can_run_sale_migration:
 		field_key_to_model.update(field_key_to_model_sale_order_line)
